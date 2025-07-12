@@ -1,59 +1,40 @@
 # Android Screen Lock Setup Instructions
 
-This guide will help you set up the screen lock functionality on Android devices using the accessibility service.
+All required Android files are now included in the project. No manual copying is needed.
 
-## Prerequisites
+## Build and Run Instructions
 
-- Android Studio installed
-- Capacitor Android platform added (`npx cap add android`)
+After cloning the repository and running `npm install` and `npm run build`, follow these steps:
 
-## Step 1: Copy Required Files
+1. **Add Android Platform:**
+   ```bash
+   npx cap add android
+   ```
 
-### 1.1 Copy Java Plugin Files
-Copy these files to your Android project:
+2. **Sync Capacitor:**
+   ```bash
+   npx cap sync android
+   ```
 
-**From:** `android/app/src/main/java/app/lovable/lockscreen/`
-**To:** `android/app/src/main/java/app/lovable/lockscreen/`
+3. **Run on Android:**
+   ```bash
+   npx cap run android
+   ```
 
-Files:
-- `LockScreenPlugin.java`
-- `LockScreenAccessibilityService.java`
+## First-Time Setup
 
-### 1.2 Copy XML Configuration
-Copy this file to your Android project:
+When you first run the app on your Android device:
 
-**From:** `android-files/accessibility_service_config.xml`
-**To:** `android/app/src/main/res/xml/accessibility_service_config.xml`
+1. **Launch the app** - It will install and open on your device
+2. **Tap "Screen Off" button** - The app will guide you through accessibility setup
+3. **Enable accessibility service** - Follow the in-app instructions to enable "Signal Scribe Screen Lock" in Android accessibility settings
+4. **Return to app** - The screen lock feature will now work
 
-## Step 2: Update AndroidManifest.xml
+## Troubleshooting
 
-Add the following service declaration inside the `<application>` tag in `android/app/src/main/AndroidManifest.xml`:
-
-```xml
-<!-- Accessibility Service for Screen Lock -->
-<service 
-    android:name="app.lovable.lockscreen.LockScreenAccessibilityService"
-    android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-    android:label="@string/accessibility_service_label"
-    android:exported="false">
-    <meta-data
-        android:name="android.accessibilityservice"
-        android:resource="@xml/accessibility_service_config" />
-    <intent-filter>
-        <action android:name="android.accessibilityservice.AccessibilityService" />
-    </intent-filter>
-</service>
-```
-
-## Step 3: Update strings.xml
-
-Add these strings to `android/app/src/main/res/values/strings.xml`:
-
-```xml
-<!-- Accessibility Service Labels -->
-<string name="accessibility_service_label">Signal Scribe Screen Lock</string>
-<string name="accessibility_service_description">Allows the app to turn off the screen without using the power button. This service only performs the screen lock action when requested by the app.</string>
-```
+- If the app doesn't build, make sure Android Studio is installed and configured
+- If screen lock doesn't work, check that the accessibility service is enabled in Android Settings > Accessibility > Signal Scribe Screen Lock
+- For USB debugging issues, ensure developer options are enabled on your Android device
 
 ## Step 4: Build and Test
 

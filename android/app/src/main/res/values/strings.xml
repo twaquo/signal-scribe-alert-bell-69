@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">signal-scribe-alert-bell-69</string>
+    <string name="title_activity_main">signal-scribe-alert-bell-69</string>
+    <string name="package_name">app.lovable.signal_scribe_alert_bell_69</string>
+    <string name="custom_url_scheme">app.lovable.signal_scribe_alert_bell_69</string>
+    
+    <!-- Accessibility Service Labels -->
+    <string name="accessibility_service_label">Signal Scribe Screen Lock</string>
+    <string name="accessibility_service_description">Allows the app to turn off the screen without using the power button. This service only performs the screen lock action when requested by the app.</string>
+</resources>

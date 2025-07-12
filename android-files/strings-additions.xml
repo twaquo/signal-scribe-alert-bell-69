@@ -1,8 +1,0 @@
-<!-- 
-Add these strings to your strings.xml file:
-android/app/src/main/res/values/strings.xml
--->
-
-    <!-- Accessibility Service Labels -->
-    <string name="accessibility_service_label">Signal Scribe Screen Lock</string>
-    <string name="accessibility_service_description">Allows the app to turn off the screen without using the power button. This service only performs the screen lock action when requested by the app.</string>
