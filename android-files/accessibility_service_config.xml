@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+This file should be placed in: android/app/src/main/res/xml/accessibility_service_config.xml
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/accessibility_service_description"
+    android:accessibilityEventTypes="typeNotificationStateChanged"
+    android:accessibilityFlags="flagIncludeNotImportantViews"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canPerformGestures="false"
+    android:canRetrieveWindowContent="false" />
