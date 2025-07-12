@@ -1,11 +1,15 @@
 
 import React from 'react';
 import { useSignalTracker } from '@/hooks/useSignalTracker';
+import { useScreenLockSetup } from '@/hooks/useScreenLockSetup';
 import SignalInput from '@/components/SignalInput';
 import ControlPanel from '@/components/ControlPanel';
 import SaveTsDialog from '@/components/SaveTsDialog';
+import ScreenLockSetup from '@/components/ScreenLockSetup';
 
 const Index = () => {
+  const { showSetupDialog, hideSetup, showSetup } = useScreenLockSetup();
+  
   const {
     signalsText,
     setSignalsText,
@@ -33,7 +37,7 @@ const Index = () => {
     handleClear,
     handleRingOff,
     handleScreenOff,
-  } = useSignalTracker();
+  } = useSignalTracker(showSetup);
 
   return (
     <div className="bg-background flex flex-col select-none" style={{ 
@@ -77,6 +81,11 @@ const Index = () => {
         onAntidelayChange={setSaveTsAntidelayInput}
         onSave={handleSaveTsSubmit}
         onCancel={handleSaveTsCancel}
+      />
+
+      <ScreenLockSetup
+        isVisible={showSetupDialog}
+        onClose={hideSetup}
       />
     </div>
   );

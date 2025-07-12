@@ -34,6 +34,9 @@ const config: CapacitorConfig = {
       permissions: {
         external: 'read-write'
       }
+    },
+    LockScreen: {
+      // Custom plugin for screen lock functionality
     }
   },
 };

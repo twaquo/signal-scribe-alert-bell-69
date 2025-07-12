@@ -3,8 +3,10 @@ import { useSignalState } from './useSignalState';
 import { useAntidelayManager } from './useAntidelayManager';
 import { useSaveTsManager } from './useSaveTsManager';
 import { CapacitorIntents } from 'capacitor-android-intents';
+import { useToast } from '@/hooks/use-toast';
 
-export const useSignalTracker = () => {
+export const useSignalTracker = (showScreenLockSetup?: () => void) => {
+  const { toast } = useToast();
   const {
     signalsText,
     setSignalsText,
@@ -99,28 +101,81 @@ export const useSignalTracker = () => {
       
       if ((window as any).Capacitor && (window as any).Capacitor.isNativePlatform()) {
         if ((window as any).Capacitor.getPlatform() === 'android') {
-          console.log('📱 Android platform detected - attempting to send broadcast intent');
-          console.log('📱 Broadcast intent action: com.tasker.SCREEN_OFF');
+          console.log('📱 Android platform detected - attempting to lock screen using accessibility service');
           
-          // Send broadcast intent using capacitor-android-intents
-          await CapacitorIntents.sendBroadcastIntent({
-            action: 'com.tasker.SCREEN_OFF',
-            value: {
-              source: 'signal-scribe-app',
-              timestamp: Date.now()
+          // Import LockScreen plugin dynamically to avoid web environment issues
+          const { default: LockScreen } = await import('../plugins/LockScreenPlugin');
+          
+          // Check if accessibility service is enabled first
+          const serviceStatus = await LockScreen.isAccessibilityServiceEnabled();
+          console.log('📱 Accessibility service enabled:', serviceStatus.enabled);
+          
+          if (!serviceStatus.enabled) {
+            console.log('📱 Accessibility service not enabled - showing setup dialog');
+            
+            // Show setup dialog if provided, otherwise fall back to direct settings
+            if (showScreenLockSetup) {
+              showScreenLockSetup();
+            } else {
+              const settingsResult = await LockScreen.openAccessibilitySettings();
+              console.log('📱 Settings opened:', settingsResult.success);
+              
+              toast({
+                title: "Accessibility Service Required",
+                description: "Please enable 'Signal Scribe Screen Lock' in Accessibility settings to use screen lock feature.",
+              });
             }
-          });
+            return;
+          }
           
-          console.log('📱 Broadcast intent sent successfully: com.tasker.SCREEN_OFF');
+          // Attempt to lock screen using accessibility service
+          const lockResult = await LockScreen.lockScreen();
+          console.log('📱 Lock screen result:', lockResult);
+          
+          if (lockResult.success) {
+            console.log('📱 Screen locked successfully using accessibility service');
+          } else if (lockResult.needsPermission) {
+            console.log('📱 Accessibility permission needed - redirecting to settings');
+            await LockScreen.openAccessibilitySettings();
+            
+            toast({
+              title: "Enable Accessibility Service",
+              description: "Please turn on 'Signal Scribe Screen Lock' in the accessibility settings to lock your screen.",
+            });
+          } else {
+            console.error('📱 Failed to lock screen:', lockResult.error);
+            
+            toast({
+              title: "Screen Lock Failed",
+              description: lockResult.error || "Could not lock screen. Please check accessibility settings.",
+              variant: "destructive",
+            });
+          }
         } else {
-          console.log('📱 Not Android platform');
+          console.log('📱 Not Android platform - screen lock not supported');
+          
+          toast({
+            title: "Not Supported",
+            description: "Screen lock is only supported on Android devices.",
+          });
         }
       } else {
         console.log('📱 Web environment - Not on mobile device');
-        console.log('📱 For Tasker: Use broadcast intent com.tasker.SCREEN_OFF');
+        console.log('📱 Screen lock requires Android device with accessibility service');
+        
+        toast({
+          title: "Mobile Only Feature",
+          description: "Screen lock feature requires an Android device with accessibility permissions.",
+        });
       }
     } catch (error) {
       console.error('📱 Error in Screen Off handler:', error);
+      
+      toast({
+        title: "Error",
+        description: "Failed to lock screen. Please try again.",
+        variant: "destructive",
+      });
     }
     
     console.log('📱 Screen Off function completed');
